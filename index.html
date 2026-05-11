@@ -206,7 +206,6 @@
     padding: 110px 5% 60px;
     overflow: hidden;
     z-index: 1;
-    
   }
 
   .hero-bg-orb {
@@ -235,7 +234,6 @@
     50% { transform: translateY(-30px); }
   }
 
-  /* ── BADGE (fixed) ── */
   .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -319,14 +317,6 @@
   .hero-stat { text-align: right; border-right: 2px solid var(--blue); padding-right: 20px; }
   .hero-stat .num { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--blue-bright); display: block; }
   .hero-stat .label { font-family: 'Rajdhani', sans-serif; font-size: 0.74rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
-
-
-  @keyframes scrollDrop {
-    0% { transform: scaleY(0); transform-origin: top; }
-    50% { transform: scaleY(1); transform-origin: top; }
-    51% { transform: scaleY(1); transform-origin: bottom; }
-    100% { transform: scaleY(0); transform-origin: bottom; }
-  }
 
   /* ── BUTTONS ── */
   .btn-primary {
@@ -494,13 +484,19 @@
     margin-bottom: 0;
   }
 
+  /* ── PORTFOLIO ITEM — image fully visible, no crop ── */
   .portfolio-item {
     position: relative;
     border: 1px solid var(--border);
-    border-radius: 4px; overflow: hidden;
+    border-radius: 4px;
+    overflow: hidden;
     background: var(--dark2);
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    cursor: pointer; aspect-ratio: 4/3;
+    cursor: zoom-in;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .portfolio-item:hover {
@@ -509,24 +505,45 @@
     box-shadow: 0 20px 56px rgba(14,165,233,0.2);
   }
 
-  /* Image fills the box — place any image inside */
+  /* object-fit: contain so full image shows, no cropping */
   .portfolio-item img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .portfolio-item:hover img { transform: scale(1.06); }
+  .portfolio-item:hover img { transform: scale(1.04); }
 
   .portfolio-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(2,4,9,0.95) 100%);
+    background: linear-gradient(180deg, transparent 40%, rgba(2,4,9,0.92) 100%);
     display: flex; flex-direction: column;
     justify-content: flex-end; padding: 20px;
     opacity: 0; transition: opacity 0.4s;
+    pointer-events: none;
   }
 
   .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+
+  /* Zoom icon hint on hover */
+  .portfolio-zoom-icon {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    background: rgba(14,165,233,0.15);
+    border: 1px solid rgba(14,165,233,0.4);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    font-size: 1rem;
+    backdrop-filter: blur(6px);
+  }
+
+  .portfolio-item:hover .portfolio-zoom-icon { opacity: 1; }
 
   .portfolio-label {
     font-family: 'Rajdhani', sans-serif;
@@ -539,6 +556,143 @@
     font-family: 'Orbitron', sans-serif;
     font-weight: 600; font-size: 0.92rem; color: var(--white);
   }
+
+  /* ══════════════════════════
+     LIGHTBOX
+  ══════════════════════════ */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .lightbox.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Animated border frame */
+  .lightbox-frame {
+    position: relative;
+    max-width: 92vw;
+    max-height: 88vh;
+    border: 1px solid rgba(14,165,233,0.35);
+    border-radius: 4px;
+    overflow: hidden;
+    transform: scale(0.88);
+    transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 0 80px rgba(14,165,233,0.15), 0 40px 80px rgba(0,0,0,0.7);
+  }
+
+  .lightbox.active .lightbox-frame {
+    transform: scale(1);
+  }
+
+  .lightbox-frame::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), #818cf8, transparent);
+    z-index: 2;
+  }
+
+  .lightbox-img {
+    display: block;
+    max-width: 92vw;
+    max-height: 88vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Corner deco inside lightbox */
+  .lb-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .lb-corner.tl { top: 8px; left: 8px; border-top: 1px solid var(--blue); border-left: 1px solid var(--blue); }
+  .lb-corner.tr { top: 8px; right: 8px; border-top: 1px solid var(--blue); border-right: 1px solid var(--blue); }
+  .lb-corner.bl { bottom: 8px; left: 8px; border-bottom: 1px solid var(--blue); border-left: 1px solid var(--blue); }
+  .lb-corner.br { bottom: 8px; right: 8px; border-bottom: 1px solid var(--blue); border-right: 1px solid var(--blue); }
+
+  /* Close button */
+  .lightbox-close {
+    position: fixed;
+    top: 20px; right: 24px;
+    z-index: 10001;
+    width: 44px; height: 44px;
+    border-radius: 4px;
+    background: rgba(2,4,9,0.8);
+    border: 1px solid var(--border-hover);
+    color: var(--white);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s;
+    backdrop-filter: blur(8px);
+  }
+
+  .lightbox-close:hover {
+    background: var(--blue);
+    color: var(--black);
+    border-color: var(--blue);
+  }
+
+  /* Caption bar */
+  .lightbox-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 14px 20px;
+    background: linear-gradient(0deg, rgba(2,4,9,0.9) 0%, transparent 100%);
+    z-index: 3;
+  }
+
+  .lightbox-caption .lc-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 3px;
+  }
+
+  .lightbox-caption .lc-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem; font-weight: 600;
+    color: var(--white);
+  }
+
+  /* Nav arrows */
+  .lightbox-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10001;
+    width: 46px; height: 46px;
+    background: rgba(2,4,9,0.75);
+    border: 1px solid var(--border-hover);
+    border-radius: 4px;
+    color: var(--white);
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s;
+    backdrop-filter: blur(8px);
+  }
+
+  .lightbox-nav:hover { background: var(--blue); color: var(--black); border-color: var(--blue); }
+  .lightbox-prev { left: 16px; }
+  .lightbox-next { right: 16px; }
 
   /* ── PROCESS ── */
   #process { background: linear-gradient(180deg, var(--black) 0%, var(--dark2) 100%); }
@@ -712,7 +866,6 @@
 
     .process-steps { grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 36px; }
     .process-steps::before { display: none; }
-    
     .step-desc { font-size: 0.88rem; }
 
     .contact-grid { grid-template-columns: 1fr; gap: 36px; margin-top: 36px; }
@@ -721,6 +874,10 @@
 
     footer { flex-direction: column; align-items: flex-start; gap: 14px; }
     section { padding: 48px 5%; }
+
+    .lightbox-prev { left: 6px; }
+    .lightbox-next { right: 6px; }
+    .lightbox-nav { width: 38px; height: 38px; font-size: 1rem; }
   }
 
   @media (max-width: 520px) {
@@ -745,7 +902,7 @@
     .about-card { padding: 22px 16px; }
     footer { padding: 28px 4%; }
     .footer-links { flex-wrap: wrap; gap: 12px; }
-    
+
     .step-title { font-size: 0.95rem; }
     .step-desc { font-size: 0.85rem; }
   }
@@ -778,6 +935,24 @@
   <a href="#process" onclick="closeMenu()">Process</a>
   <a href="#contact" onclick="closeMenu()">Contact</a>
   <a href="https://wa.me/2349028499626" target="_blank" class="mobile-wa">WhatsApp Me</a>
+</div>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lightbox-close" id="lbClose" title="Close (Esc)">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lbPrev" title="Previous">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lbNext" title="Next">›</button>
+  <div class="lightbox-frame">
+    <div class="lb-corner tl"></div>
+    <div class="lb-corner tr"></div>
+    <div class="lb-corner bl"></div>
+    <div class="lb-corner br"></div>
+    <img class="lightbox-img" id="lbImg" src="" alt="" />
+    <div class="lightbox-caption">
+      <p class="lc-label" id="lbLabel"></p>
+      <p class="lc-name" id="lbName"></p>
+    </div>
+  </div>
 </div>
 
 <!-- ── HERO ── -->
@@ -819,7 +994,6 @@
       <span class="label">Years Experience</span>
     </div>
   </div>
-  
 </section>
 
 <!-- ── BRAND STRIP ── -->
@@ -922,61 +1096,61 @@
 
   <div class="portfolio-grid">
 
-    <!-- SAMPLE 1 — rename flyer.png to your actual file name -->
-    <div class="portfolio-item fade-up">
-      <img src="flyer.png" alt="Design Sample 1" />
+    <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Flyer Design">
+      <img src="flyer.jpeg" alt="Flyer Design" loading="lazy" />
+      <div class="portfolio-zoom-icon">🔍</div>
       <div class="portfolio-overlay">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Flyer Design</p>
       </div>
     </div>
 
-    <!-- SAMPLE 2 — rename sample2.png to your actual file name -->
-    <div class="portfolio-item fade-up">
-      <img src="sample2.png" alt="Design Sample 2" />
+    <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 02">
+      <img src="sample2.jpeg" alt="Design Sample 2" loading="lazy" />
+      <div class="portfolio-zoom-icon">🔍</div>
       <div class="portfolio-overlay">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 02</p>
       </div>
     </div>
 
-    <!-- SAMPLE 3 — rename sample3.png to your actual file name -->
-    <div class="portfolio-item fade-up">
-      <img src="sample3.png" alt="Design Sample 3" />
+    <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 03">
+      <img src="sample3.jpeg" alt="Design Sample 3" loading="lazy" />
+      <div class="portfolio-zoom-icon">🔍</div>
       <div class="portfolio-overlay">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 03</p>
       </div>
     </div>
 
-    <!-- SAMPLE 4 — rename sample4.png to your actual file name -->
-    <div class="portfolio-item fade-up">
-      <img src="sample4.png" alt="Design Sample 4" />
+    <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 04">
+      <img src="sample4.jpeg" alt="Design Sample 4" loading="lazy" />
+      <div class="portfolio-zoom-icon">🔍</div>
       <div class="portfolio-overlay">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 04</p>
       </div>
     </div>
 
-    <!-- SAMPLE 5 — rename sample5.png to your actual file name -->
-    <div class="portfolio-item fade-up">
-      <img src="sample5.png" alt="Design Sample 5" />
+    <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 05">
+      <img src="sample5.jpeg" alt="Design Sample 5" loading="lazy" />
+      <div class="portfolio-zoom-icon">🔍</div>
       <div class="portfolio-overlay">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 05</p>
       </div>
     </div>
 
-    <!-- SAMPLE 6 — rename sample6.png to your actual file name -->
-    <div class="portfolio-item fade-up">
-      <img src="sample6.png" alt="Design Sample 6" />
+    <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 06">
+      <img src="sample6.jpeg" alt="Design Sample 6" loading="lazy" />
+      <div class="portfolio-zoom-icon">🔍</div>
       <div class="portfolio-overlay">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 06</p>
       </div>
     </div>
 
-      </div>
+  </div>
 </section>
 
 <!-- ── PROCESS ── -->
@@ -1119,7 +1293,7 @@
 </a>
 
 <script>
-  // Scroll animations
+  /* ── Scroll animations ── */
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
@@ -1127,18 +1301,18 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  // Portfolio stagger
+  /* ── Portfolio stagger ── */
   document.querySelectorAll('.portfolio-grid .portfolio-item').forEach((el, i) => {
     el.style.transitionDelay = (i * 0.07) + 's';
   });
 
-  // Nav scroll
+  /* ── Nav scroll ── */
   const nav = document.querySelector('nav');
   window.addEventListener('scroll', () => {
     nav.style.background = window.scrollY > 60 ? 'rgba(2,4,9,0.97)' : 'rgba(2,4,9,0.85)';
   });
 
-  // Hamburger
+  /* ── Hamburger ── */
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
   hamburger.addEventListener('click', () => {
@@ -1152,7 +1326,7 @@
     document.body.style.overflow = '';
   }
 
-  // Form → WhatsApp
+  /* ── Form → WhatsApp ── */
   function handleFormSubmit() {
     const name  = document.getElementById('f-name').value.trim();
     const email = document.getElementById('f-email').value.trim();
@@ -1163,7 +1337,86 @@
     window.open('https://wa.me/2349028499626?text=' + encodeURIComponent(txt), '_blank');
   }
 
-  // Cursor glow (desktop only)
+  /* ══════════════════════════════════
+     LIGHTBOX
+  ══════════════════════════════════ */
+  const lightbox   = document.getElementById('lightbox');
+  const lbImg      = document.getElementById('lbImg');
+  const lbLabel    = document.getElementById('lbLabel');
+  const lbName     = document.getElementById('lbName');
+  const lbClose    = document.getElementById('lbClose');
+  const lbPrev     = document.getElementById('lbPrev');
+  const lbNext     = document.getElementById('lbNext');
+
+  const portfolioItems = Array.from(document.querySelectorAll('.portfolio-item'));
+  let currentIndex = 0;
+
+  function openLightbox(index) {
+    currentIndex = index;
+    const item  = portfolioItems[index];
+    const img   = item.querySelector('img');
+    lbImg.src   = img.src;
+    lbImg.alt   = img.alt;
+    lbLabel.textContent = item.dataset.label || '';
+    lbName.textContent  = item.dataset.name  || '';
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    updateNavButtons();
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => { lbImg.src = ''; }, 350);
+  }
+
+  function showPrev() {
+    if (currentIndex > 0) openLightbox(currentIndex - 1);
+  }
+
+  function showNext() {
+    if (currentIndex < portfolioItems.length - 1) openLightbox(currentIndex + 1);
+  }
+
+  function updateNavButtons() {
+    lbPrev.style.opacity = currentIndex === 0 ? '0.3' : '1';
+    lbNext.style.opacity = currentIndex === portfolioItems.length - 1 ? '0.3' : '1';
+    lbPrev.style.pointerEvents = currentIndex === 0 ? 'none' : 'all';
+    lbNext.style.pointerEvents = currentIndex === portfolioItems.length - 1 ? 'none' : 'all';
+  }
+
+  /* Attach click to each portfolio item */
+  portfolioItems.forEach((item, i) => {
+    item.addEventListener('click', () => openLightbox(i));
+  });
+
+  /* Controls */
+  lbClose.addEventListener('click', closeLightbox);
+  lbPrev.addEventListener('click',  showPrev);
+  lbNext.addEventListener('click',  showNext);
+
+  /* Click backdrop to close */
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  /* Keyboard navigation */
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape')      closeLightbox();
+    if (e.key === 'ArrowLeft')   showPrev();
+    if (e.key === 'ArrowRight')  showNext();
+  });
+
+  /* Touch swipe support */
+  let touchStartX = 0;
+  lightbox.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  lightbox.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx < 0 ? showNext() : showPrev(); }
+  });
+
+  /* ── Cursor glow (desktop only) ── */
   if (window.innerWidth > 860) {
     const g = document.createElement('div');
     g.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,0.06) 0%,transparent 70%);transform:translate(-50%,-50%);';
