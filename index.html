@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Vortex Visuals — Graphics & Web Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -56,6 +58,7 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
+    will-change: background;
   }
 
   .nav-logo {
@@ -213,6 +216,7 @@
     border-radius: 50%;
     filter: blur(100px);
     pointer-events: none;
+    will-change: transform;
   }
 
   .orb1 {
@@ -388,6 +392,7 @@
     display: flex; gap: 60px;
     animation: marquee 22s linear infinite;
     white-space: nowrap; width: max-content;
+    will-change: transform;
   }
 
   .brand-strip-item {
@@ -481,19 +486,19 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    margin-bottom: 0;
   }
 
-  /* ── PORTFOLIO ITEM — image fully visible, no crop ── */
+  /* ── PORTFOLIO ITEM — uniform boxes, full image visible, elegant background fill ── */
   .portfolio-item {
     position: relative;
     border: 1px solid var(--border);
     border-radius: 4px;
     overflow: hidden;
-    background: var(--dark2);
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    /* Subtle radial gradient background - blends with design, no harsh empty space */
+    background: radial-gradient(circle at center, #0a1628 0%, #050c15 100%);
+    transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
     cursor: zoom-in;
-    aspect-ratio: 4/3;
+    aspect-ratio: 4/3;  /* All boxes same size */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -505,11 +510,12 @@
     box-shadow: 0 20px 56px rgba(14,165,233,0.2);
   }
 
-  /* object-fit: contain so full image shows, no cropping */
+  /* Image shows FULLY inside the box - object-fit: contain = zero cropping */
   .portfolio-item img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: contain;  /* Full image visible, no crop */
+    object-position: center;
     display: block;
     transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
@@ -527,7 +533,6 @@
 
   .portfolio-item:hover .portfolio-overlay { opacity: 1; }
 
-  /* Zoom icon hint on hover */
   .portfolio-zoom-icon {
     position: absolute;
     top: 12px; right: 12px;
@@ -567,7 +572,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.92);
+    background: rgba(0,0,0,0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     opacity: 0;
@@ -580,7 +585,6 @@
     pointer-events: all;
   }
 
-  /* Animated border frame */
   .lightbox-frame {
     position: relative;
     max-width: 92vw;
@@ -593,9 +597,7 @@
     box-shadow: 0 0 80px rgba(14,165,233,0.15), 0 40px 80px rgba(0,0,0,0.7);
   }
 
-  .lightbox.active .lightbox-frame {
-    transform: scale(1);
-  }
+  .lightbox.active .lightbox-frame { transform: scale(1); }
 
   .lightbox-frame::before {
     content: '';
@@ -606,6 +608,7 @@
     z-index: 2;
   }
 
+  /* In the lightbox, use contain so the full image is always visible */
   .lightbox-img {
     display: block;
     max-width: 92vw;
@@ -615,19 +618,12 @@
     object-fit: contain;
   }
 
-  /* Corner deco inside lightbox */
-  .lb-corner {
-    position: absolute;
-    width: 20px; height: 20px;
-    pointer-events: none;
-    z-index: 3;
-  }
+  .lb-corner { position: absolute; width: 20px; height: 20px; pointer-events: none; z-index: 3; }
   .lb-corner.tl { top: 8px; left: 8px; border-top: 1px solid var(--blue); border-left: 1px solid var(--blue); }
   .lb-corner.tr { top: 8px; right: 8px; border-top: 1px solid var(--blue); border-right: 1px solid var(--blue); }
   .lb-corner.bl { bottom: 8px; left: 8px; border-bottom: 1px solid var(--blue); border-left: 1px solid var(--blue); }
   .lb-corner.br { bottom: 8px; right: 8px; border-bottom: 1px solid var(--blue); border-right: 1px solid var(--blue); }
 
-  /* Close button */
   .lightbox-close {
     position: fixed;
     top: 20px; right: 24px;
@@ -644,13 +640,8 @@
     backdrop-filter: blur(8px);
   }
 
-  .lightbox-close:hover {
-    background: var(--blue);
-    color: var(--black);
-    border-color: var(--blue);
-  }
+  .lightbox-close:hover { background: var(--blue); color: var(--black); border-color: var(--blue); }
 
-  /* Caption bar */
   .lightbox-caption {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -672,7 +663,6 @@
     color: var(--white);
   }
 
-  /* Nav arrows */
   .lightbox-nav {
     position: fixed;
     top: 50%;
@@ -818,7 +808,7 @@
     background: #25d366; display: flex; align-items: center; justify-content: center;
     text-decoration: none;
     box-shadow: 0 8px 28px rgba(37,211,102,0.45);
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s;
   }
 
   .whatsapp-float:hover { transform: scale(1.1) translateY(-4px); box-shadow: 0 16px 48px rgba(37,211,102,0.55); }
@@ -839,8 +829,13 @@
   }
   .fade-up.visible { opacity: 1; transform: translateY(0); }
 
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
   /* ══════════════════
-     RESPONSIVE / MOBILE
+     RESPONSIVE
   ══════════════════ */
   @media (max-width: 1024px) {
     .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
@@ -851,8 +846,7 @@
     .nav-links, .nav-cta { display: none; }
     .hamburger { display: flex; }
 
-    #hero { padding: 100px 5% 48px; min-height: auto; align-items: flex-start; }
-
+    #hero { padding: 100px 5% 48px; align-items: flex-start; }
     .hero-title { font-size: clamp(2.4rem, 11vw, 3.6rem); }
     .hero-sub { font-size: 1rem; max-width: 100%; margin-bottom: 32px; }
     .hero-actions { gap: 12px; }
@@ -911,9 +905,9 @@
 <body>
 
 <!-- ── NAVBAR ── -->
-<nav>
+<nav id="mainNav">
   <a href="#" class="nav-logo">
-    <img src="logo.jpg" alt="Vortex Visuals Logo" onerror="this.style.display='none'"/>
+    <img src="logo.jpg" alt="Vortex Visuals Logo" onerror="this.style.display='none'" width="36" height="36"/>
     <span class="nav-logo-text">VORTEX <span>VISUALS</span></span>
   </a>
   <ul class="nav-links">
@@ -923,31 +917,31 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <a href="#contact" class="nav-cta">Hire Me</a>
-  <button class="hamburger" id="hamburger" aria-label="Open menu">
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
 <!-- Mobile Menu -->
-<div class="mobile-menu" id="mobileMenu">
+<div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Mobile navigation">
   <a href="#about" onclick="closeMenu()">About</a>
   <a href="#portfolio" onclick="closeMenu()">Portfolio</a>
   <a href="#process" onclick="closeMenu()">Process</a>
   <a href="#contact" onclick="closeMenu()">Contact</a>
-  <a href="https://wa.me/2349028499626" target="_blank" class="mobile-wa">WhatsApp Me</a>
+  <a href="https://wa.me/2349028499626" target="_blank" rel="noopener noreferrer" class="mobile-wa">WhatsApp Me</a>
 </div>
 
 <!-- ── LIGHTBOX ── -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
-  <button class="lightbox-close" id="lbClose" title="Close (Esc)">✕</button>
-  <button class="lightbox-nav lightbox-prev" id="lbPrev" title="Previous">‹</button>
-  <button class="lightbox-nav lightbox-next" id="lbNext" title="Next">›</button>
+  <button class="lightbox-close" id="lbClose" title="Close (Esc)" aria-label="Close lightbox">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lbPrev" title="Previous image" aria-label="Previous image">&#8249;</button>
+  <button class="lightbox-nav lightbox-next" id="lbNext" title="Next image" aria-label="Next image">&#8250;</button>
   <div class="lightbox-frame">
     <div class="lb-corner tl"></div>
     <div class="lb-corner tr"></div>
     <div class="lb-corner bl"></div>
     <div class="lb-corner br"></div>
-    <img class="lightbox-img" id="lbImg" src="" alt="" />
+    <img class="lightbox-img" id="lbImg" src="" alt="" decoding="async"/>
     <div class="lightbox-caption">
       <p class="lc-label" id="lbLabel"></p>
       <p class="lc-name" id="lbName"></p>
@@ -957,12 +951,12 @@
 
 <!-- ── HERO ── -->
 <section id="hero">
-  <div class="hero-bg-orb orb1"></div>
-  <div class="hero-bg-orb orb2"></div>
+  <div class="hero-bg-orb orb1" aria-hidden="true"></div>
+  <div class="hero-bg-orb orb2" aria-hidden="true"></div>
 
-  <div style="max-width: 680px; position: relative; z-index: 2; width: 100%;">
+  <div style="max-width:680px;position:relative;z-index:2;width:100%;">
     <div class="hero-badge">
-      <span class="badge-dot"></span>
+      <span class="badge-dot" aria-hidden="true"></span>
       Available for Projects
     </div>
     <h1 class="hero-title">
@@ -980,7 +974,7 @@
     </div>
   </div>
 
-  <div class="hero-right">
+  <div class="hero-right" aria-hidden="true">
     <div class="hero-stat">
       <span class="num">100%</span>
       <span class="label">Client Satisfaction</span>
@@ -997,7 +991,7 @@
 </section>
 
 <!-- ── BRAND STRIP ── -->
-<div class="brand-strip">
+<div class="brand-strip" aria-hidden="true">
   <div class="brand-strip-track">
     <span class="brand-strip-item">Logo Design</span>
     <span class="brand-strip-item">Flyer Design</span>
@@ -1028,29 +1022,29 @@
   <div class="about-grid">
     <div class="about-visual fade-up">
       <div class="about-card">
-        <div class="corner-deco tl"></div>
-        <div class="corner-deco br"></div>
-        <p class="section-tag" style="margin-bottom: 8px;">Services</p>
-        <p style="color: var(--white); font-weight: 500; font-size: 1.08rem; margin-bottom: 5px;">What I Create</p>
-        <p style="color: var(--muted); font-size: 0.92rem; margin-bottom: 0;">From concept to final pixel — I deliver.</p>
+        <div class="corner-deco tl" aria-hidden="true"></div>
+        <div class="corner-deco br" aria-hidden="true"></div>
+        <p class="section-tag" style="margin-bottom:8px;">Services</p>
+        <p style="color:var(--white);font-weight:500;font-size:1.08rem;margin-bottom:5px;">What I Create</p>
+        <p style="color:var(--muted);font-size:0.92rem;margin-bottom:0;">From concept to final pixel — I deliver.</p>
         <div class="about-services">
           <div class="service-item">
-            <span class="service-icon">🎨</span>
+            <span class="service-icon" aria-hidden="true">🎨</span>
             <p class="service-name">Graphics Design</p>
             <p class="service-desc">Flyers, banners, posters, social media visuals &amp; more.</p>
           </div>
           <div class="service-item">
-            <span class="service-icon">🌐</span>
+            <span class="service-icon" aria-hidden="true">🌐</span>
             <p class="service-name">Web Design</p>
             <p class="service-desc">Beautiful, responsive websites built to convert.</p>
           </div>
           <div class="service-item">
-            <span class="service-icon">🏷️</span>
+            <span class="service-icon" aria-hidden="true">🏷️</span>
             <p class="service-name">Brand Identity</p>
             <p class="service-desc">Logos, colour systems &amp; full brand kits.</p>
           </div>
           <div class="service-item">
-            <span class="service-icon">📱</span>
+            <span class="service-icon" aria-hidden="true">📱</span>
             <p class="service-name">Social Media</p>
             <p class="service-desc">Scroll-stopping content for every platform.</p>
           </div>
@@ -1060,14 +1054,14 @@
 
     <div class="about-text fade-up">
       <p class="section-tag">About Me</p>
-      <h2 class="section-title" style="font-size: clamp(1.5rem, 3vw, 2.2rem);">Vortex <span>Visuals</span></h2>
+      <h2 class="section-title" style="font-size:clamp(1.5rem,3vw,2.2rem);">Vortex <span>Visuals</span></h2>
       <p class="lead">
         I'm a creative graphics designer and web designer passionate about bringing
         ideas to life through powerful visuals and sleek digital experiences. Every
         design is crafted with intention — blending strategy, creativity, and technical
         precision to deliver results that matter.
       </p>
-      <p style="color: var(--muted); font-size: 0.98rem; line-height: 1.8; margin-bottom: 24px;">
+      <p style="color:var(--muted);font-size:0.98rem;line-height:1.8;margin-bottom:24px;">
         Whether you need a striking flyer, a full brand overhaul, or a website that
         turns visitors into customers — Vortex Visuals has you covered. Let's build
         something extraordinary together.
@@ -1091,74 +1085,72 @@
       <h2 class="section-title">Creative <span>Portfolio</span></h2>
       <p class="section-desc">Selected works across graphics design, branding, and web.</p>
     </div>
-    <a href="#contact" class="btn-secondary">Request a Design →</a>
+    <a href="#contact" class="btn-secondary">Request a Design &rarr;</a>
   </div>
 
   <div class="portfolio-grid">
-
     <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Flyer Design">
-      <img src="flyer.jpeg" alt="Flyer Design" loading="lazy" />
-      <div class="portfolio-zoom-icon">🔍</div>
-      <div class="portfolio-overlay">
+      <img src="flyer.jpeg" alt="Flyer Design" loading="lazy" decoding="async"/>
+      <div class="portfolio-zoom-icon" aria-hidden="true">🔍</div>
+      <div class="portfolio-overlay" aria-hidden="true">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Flyer Design</p>
       </div>
     </div>
 
     <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 02">
-      <img src="sample2.jpeg" alt="Design Sample 2" loading="lazy" />
-      <div class="portfolio-zoom-icon">🔍</div>
-      <div class="portfolio-overlay">
+      <img src="sample2.jpeg" alt="Design Sample 2" loading="lazy" decoding="async"/>
+      <div class="portfolio-zoom-icon" aria-hidden="true">🔍</div>
+      <div class="portfolio-overlay" aria-hidden="true">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 02</p>
       </div>
     </div>
 
     <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 03">
-      <img src="sample3.jpeg" alt="Design Sample 3" loading="lazy" />
-      <div class="portfolio-zoom-icon">🔍</div>
-      <div class="portfolio-overlay">
+      <img src="sample3.jpeg" alt="Design Sample 3" loading="lazy" decoding="async"/>
+      <div class="portfolio-zoom-icon" aria-hidden="true">🔍</div>
+      <div class="portfolio-overlay" aria-hidden="true">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 03</p>
       </div>
     </div>
 
     <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 04">
-      <img src="sample4.jpeg" alt="Design Sample 4" loading="lazy" />
-      <div class="portfolio-zoom-icon">🔍</div>
-      <div class="portfolio-overlay">
+      <img src="sample4.jpeg" alt="Design Sample 4" loading="lazy" decoding="async"/>
+      <div class="portfolio-zoom-icon" aria-hidden="true">🔍</div>
+      <div class="portfolio-overlay" aria-hidden="true">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 04</p>
       </div>
     </div>
 
     <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 05">
-      <img src="sample5.jpeg" alt="Design Sample 5" loading="lazy" />
-      <div class="portfolio-zoom-icon">🔍</div>
-      <div class="portfolio-overlay">
+      <img src="sample5.jpeg" alt="Design Sample 5" loading="lazy" decoding="async"/>
+      <div class="portfolio-zoom-icon" aria-hidden="true">🔍</div>
+      <div class="portfolio-overlay" aria-hidden="true">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 05</p>
       </div>
     </div>
 
     <div class="portfolio-item fade-up" data-label="Graphic Design" data-name="Sample 06">
-      <img src="sample6.jpeg" alt="Design Sample 6" loading="lazy" />
-      <div class="portfolio-zoom-icon">🔍</div>
-      <div class="portfolio-overlay">
+      <img src="sample6.jpeg" alt="Design Sample 6" loading="lazy" decoding="async"/>
+      <div class="portfolio-zoom-icon" aria-hidden="true">🔍</div>
+      <div class="portfolio-overlay" aria-hidden="true">
         <p class="portfolio-label">Graphic Design</p>
         <p class="portfolio-name">Sample 06</p>
       </div>
     </div>
-
   </div>
 </section>
 
 <!-- ── PROCESS ── -->
 <section id="process">
-  <div style="text-align: center;" class="fade-up">
-    <p class="section-tag" style="justify-content: center;">How It Works</p>
+  <div style="text-align:center;" class="fade-up">
+    <p class="section-tag" style="justify-content:center;">How It Works</p>
     <h2 class="section-title">My Creative <span>Process</span></h2>
-    <p class="section-desc" style="margin: 0 auto; text-align: center;">A streamlined approach built for speed, quality, and your complete satisfaction.</p>
+    <p class="section-desc" style="margin:0 auto;text-align:center;">A streamlined approach built for speed, quality, and your complete satisfaction.</p>
   </div>
 
   <div class="process-steps">
@@ -1196,60 +1188,60 @@
   <div class="contact-grid">
     <div class="contact-info fade-up">
       <div class="contact-block">
-        <div class="contact-icon-wrap">📧</div>
+        <div class="contact-icon-wrap" aria-hidden="true">📧</div>
         <div>
           <p class="contact-block-label">Email</p>
           <a href="mailto:vortexvisuals10@gmail.com" class="contact-block-value">vortexvisuals10@gmail.com</a>
         </div>
       </div>
       <div class="contact-block">
-        <div class="contact-icon-wrap">📞</div>
+        <div class="contact-icon-wrap" aria-hidden="true">📞</div>
         <div>
           <p class="contact-block-label">Phone / WhatsApp</p>
           <a href="tel:+2349028499626" class="contact-block-value">+234 902 849 9626</a>
         </div>
       </div>
       <div class="contact-block">
-        <div class="contact-icon-wrap">💬</div>
+        <div class="contact-icon-wrap" aria-hidden="true">💬</div>
         <div>
           <p class="contact-block-label">WhatsApp</p>
-          <a href="https://wa.me/2349028499626" target="_blank" class="contact-block-value">Chat on WhatsApp →</a>
+          <a href="https://wa.me/2349028499626" target="_blank" rel="noopener noreferrer" class="contact-block-value">Chat on WhatsApp &rarr;</a>
         </div>
       </div>
       <div class="contact-block">
-        <div class="contact-icon-wrap">⏱️</div>
+        <div class="contact-icon-wrap" aria-hidden="true">⏱️</div>
         <div>
           <p class="contact-block-label">Response Time</p>
           <span class="contact-block-value" style="cursor:default;">Within 24 hours</span>
         </div>
       </div>
-      <div style="background: var(--dark3); border: 1px solid var(--border); border-radius: 4px; padding: 24px; position: relative; overflow: hidden;">
-        <div class="corner-deco tl"></div>
-        <p class="section-tag" style="margin-bottom: 10px;">Quick Quote via WhatsApp</p>
-        <p style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; margin-bottom: 18px;">
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:4px;padding:24px;position:relative;overflow:hidden;">
+        <div class="corner-deco tl" aria-hidden="true"></div>
+        <p class="section-tag" style="margin-bottom:10px;">Quick Quote via WhatsApp</p>
+        <p style="font-size:0.92rem;color:var(--muted);line-height:1.7;margin-bottom:18px;">
           For fastest response, send your project details directly on WhatsApp and get a quote within minutes.
         </p>
-        <a href="https://wa.me/2349028499626?text=Hi%20Vortex%20Visuals!%20I'd%20like%20to%20discuss%20a%20design%20project." target="_blank" class="btn-primary">
+        <a href="https://wa.me/2349028499626?text=Hi%20Vortex%20Visuals!%20I'd%20like%20to%20discuss%20a%20design%20project." target="_blank" rel="noopener noreferrer" class="btn-primary">
           Chat on WhatsApp
         </a>
       </div>
     </div>
 
     <div class="contact-form fade-up">
-      <p style="font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 28px;">Send a Message</p>
+      <p style="font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:600;color:var(--white);margin-bottom:28px;">Send a Message</p>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Your Name</label>
-          <input type="text" class="form-input" id="f-name" placeholder="John Doe" />
+          <label class="form-label" for="f-name">Your Name</label>
+          <input type="text" class="form-input" id="f-name" name="name" placeholder="John Doe" autocomplete="name"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" class="form-input" id="f-email" placeholder="john@email.com" />
+          <label class="form-label" for="f-email">Email Address</label>
+          <input type="email" class="form-input" id="f-email" name="email" placeholder="john@email.com" autocomplete="email"/>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Service Needed</label>
-        <select class="form-input" id="f-service" style="appearance:none; cursor:pointer;">
+        <label class="form-label" for="f-service">Service Needed</label>
+        <select class="form-input" id="f-service" name="service" style="appearance:none;cursor:pointer;">
           <option value="" style="background:#050c15;">Select a service...</option>
           <option value="Flyer / Poster Design" style="background:#050c15;">Flyer / Poster Design</option>
           <option value="Logo & Brand Identity" style="background:#050c15;">Logo &amp; Brand Identity</option>
@@ -1259,11 +1251,11 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Project Details</label>
-        <textarea class="form-textarea" id="f-msg" placeholder="Tell me about your project, budget, and timeline..."></textarea>
+        <label class="form-label" for="f-msg">Project Details</label>
+        <textarea class="form-textarea" id="f-msg" name="message" placeholder="Tell me about your project, budget, and timeline..."></textarea>
       </div>
-      <button onclick="handleFormSubmit()" class="btn-primary" style="width:100%; text-align:center;">
-        Send Message →
+      <button type="button" onclick="handleFormSubmit()" class="btn-primary" style="width:100%;text-align:center;">
+        Send Message &rarr;
       </button>
     </div>
   </div>
@@ -1273,7 +1265,7 @@
 <footer>
   <div>
     <p class="footer-brand">VORTEX <span>VISUALS</span></p>
-    <p class="footer-copy" style="margin-top:5px;">© 2026 Vortex Visuals. All rights reserved.</p>
+    <p class="footer-copy" style="margin-top:5px;">&copy; 2026 Vortex Visuals. All rights reserved.</p>
   </div>
   <ul class="footer-links">
     <li><a href="#about">About</a></li>
@@ -1285,9 +1277,10 @@
 
 <!-- ── WHATSAPP FLOAT ── -->
 <a href="https://wa.me/2349028499626?text=Hi%20Vortex%20Visuals!%20I'd%20like%20to%20discuss%20a%20project."
-   target="_blank" class="whatsapp-float" title="Chat on WhatsApp">
-  <span class="whatsapp-pulse"></span>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+   target="_blank" rel="noopener noreferrer"
+   class="whatsapp-float" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">
+  <span class="whatsapp-pulse" aria-hidden="true"></span>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
   </svg>
 </a>
@@ -1296,7 +1289,10 @@
   /* ── Scroll animations ── */
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
     });
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
@@ -1306,25 +1302,41 @@
     el.style.transitionDelay = (i * 0.07) + 's';
   });
 
-  /* ── Nav scroll ── */
-  const nav = document.querySelector('nav');
+  /* ── Nav scroll (throttled) ── */
+  const nav = document.getElementById('mainNav');
+  let scrollTicking = false;
   window.addEventListener('scroll', () => {
-    nav.style.background = window.scrollY > 60 ? 'rgba(2,4,9,0.97)' : 'rgba(2,4,9,0.85)';
-  });
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        nav.style.background = window.scrollY > 60 ? 'rgba(2,4,9,0.97)' : 'rgba(2,4,9,0.85)';
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }, { passive: true });
 
   /* ── Hamburger ── */
-  const hamburger = document.getElementById('hamburger');
+  const hamburger  = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
+
   hamburger.addEventListener('click', () => {
-    const open = mobileMenu.classList.toggle('open');
-    hamburger.classList.toggle('open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
   });
+
   function closeMenu() {
     mobileMenu.classList.remove('open');
     hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
   }
+
+  /* Close mobile menu on outside click */
+  mobileMenu.addEventListener('click', e => {
+    if (e.target === mobileMenu) closeMenu();
+  });
 
   /* ── Form → WhatsApp ── */
   function handleFormSubmit() {
@@ -1332,22 +1344,24 @@
     const email = document.getElementById('f-email').value.trim();
     const svc   = document.getElementById('f-service').value;
     const msg   = document.getElementById('f-msg').value.trim();
-    if (!name || !email || !msg) { alert('Please fill in your name, email, and project details.'); return; }
-    const txt = `Hello Vortex Visuals!\n\nName: ${name}\nEmail: ${email}\nService: ${svc||'Not specified'}\n\nMessage: ${msg}`;
-    window.open('https://wa.me/2349028499626?text=' + encodeURIComponent(txt), '_blank');
+    if (!name || !email || !msg) {
+      alert('Please fill in your name, email, and project details.');
+      return;
+    }
+    const text = `Hello Vortex Visuals!\n\nName: ${name}\nEmail: ${email}\nService: ${svc || 'Not specified'}\n\nMessage: ${msg}`;
+    window.open('https://wa.me/2349028499626?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer');
   }
 
   /* ══════════════════════════════════
      LIGHTBOX
   ══════════════════════════════════ */
-  const lightbox   = document.getElementById('lightbox');
-  const lbImg      = document.getElementById('lbImg');
-  const lbLabel    = document.getElementById('lbLabel');
-  const lbName     = document.getElementById('lbName');
-  const lbClose    = document.getElementById('lbClose');
-  const lbPrev     = document.getElementById('lbPrev');
-  const lbNext     = document.getElementById('lbNext');
-
+  const lightbox       = document.getElementById('lightbox');
+  const lbImg          = document.getElementById('lbImg');
+  const lbLabel        = document.getElementById('lbLabel');
+  const lbName         = document.getElementById('lbName');
+  const lbClose        = document.getElementById('lbClose');
+  const lbPrev         = document.getElementById('lbPrev');
+  const lbNext         = document.getElementById('lbNext');
   const portfolioItems = Array.from(document.querySelectorAll('.portfolio-item'));
   let currentIndex = 0;
 
@@ -1361,6 +1375,7 @@
     lbName.textContent  = item.dataset.name  || '';
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
+    lbClose.focus();
     updateNavButtons();
   }
 
@@ -1379,49 +1394,59 @@
   }
 
   function updateNavButtons() {
-    lbPrev.style.opacity = currentIndex === 0 ? '0.3' : '1';
-    lbNext.style.opacity = currentIndex === portfolioItems.length - 1 ? '0.3' : '1';
-    lbPrev.style.pointerEvents = currentIndex === 0 ? 'none' : 'all';
-    lbNext.style.pointerEvents = currentIndex === portfolioItems.length - 1 ? 'none' : 'all';
+    const atStart = currentIndex === 0;
+    const atEnd   = currentIndex === portfolioItems.length - 1;
+    lbPrev.style.opacity       = atStart ? '0.3' : '1';
+    lbNext.style.opacity       = atEnd   ? '0.3' : '1';
+    lbPrev.style.pointerEvents = atStart ? 'none' : 'all';
+    lbNext.style.pointerEvents = atEnd   ? 'none' : 'all';
   }
 
-  /* Attach click to each portfolio item */
   portfolioItems.forEach((item, i) => {
     item.addEventListener('click', () => openLightbox(i));
   });
 
-  /* Controls */
   lbClose.addEventListener('click', closeLightbox);
   lbPrev.addEventListener('click',  showPrev);
   lbNext.addEventListener('click',  showNext);
 
-  /* Click backdrop to close */
   lightbox.addEventListener('click', e => {
     if (e.target === lightbox) closeLightbox();
   });
 
-  /* Keyboard navigation */
   document.addEventListener('keydown', e => {
     if (!lightbox.classList.contains('active')) return;
-    if (e.key === 'Escape')      closeLightbox();
-    if (e.key === 'ArrowLeft')   showPrev();
-    if (e.key === 'ArrowRight')  showNext();
+    if (e.key === 'Escape')     { e.preventDefault(); closeLightbox(); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); showPrev(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); showNext(); }
   });
 
-  /* Touch swipe support */
+  /* Touch swipe */
   let touchStartX = 0;
-  lightbox.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  lightbox.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
   lightbox.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - touchStartX;
     if (Math.abs(dx) > 50) { dx < 0 ? showNext() : showPrev(); }
-  });
+  }, { passive: true });
 
-  /* ── Cursor glow (desktop only) ── */
-  if (window.innerWidth > 860) {
-    const g = document.createElement('div');
-    g.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,0.06) 0%,transparent 70%);transform:translate(-50%,-50%);';
-    document.body.appendChild(g);
-    document.addEventListener('mousemove', e => { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; });
+  /* ── Cursor glow (desktop only, passive) ── */
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const glow = document.createElement('div');
+    glow.style.cssText = 'position:fixed;pointer-events:none;z-index:1;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(14,165,233,0.06) 0%,transparent 70%);transform:translate(-50%,-50%);transition:opacity 0.3s;';
+    document.body.appendChild(glow);
+    let glowTick = false;
+    document.addEventListener('mousemove', e => {
+      if (!glowTick) {
+        requestAnimationFrame(() => {
+          glow.style.left = e.clientX + 'px';
+          glow.style.top  = e.clientY + 'px';
+          glowTick = false;
+        });
+        glowTick = true;
+      }
+    }, { passive: true });
   }
 </script>
 </body>
